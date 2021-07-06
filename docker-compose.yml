@@ -11,13 +11,11 @@ services:
       SWAGGER_JSON: /documentation/swagger.json
       BASE_URL: /documentation/api/v1
 
-  wiki:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    depends_on:
-      - database
     environment:
       DATABASE_URL: database
       JWT_SECRET: "QgTPVshDVPqqcNMvinBd8vWhGJ8i7udr"
@@ -26,7 +24,5 @@ services:
       FRONT_URL: "http://localhost"
       DOCUMENTATION_URL: "http://localhost:8085"
       PORT: ":8080"
-    links:
-      - database
     ports:
       - 8080:8080
