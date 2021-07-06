@@ -2,6 +2,8 @@ package server
 
 import (
 	"fmt"
+	"github.com/CorentinCrz/abstracts/service"
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"net/http"
@@ -10,12 +12,14 @@ import (
 
 type Server struct {
 	Router *mux.Router
+	es *elasticsearch.Client
 }
 
 
 func New(router *mux.Router) *Server {
 	return &Server{
 		Router: router,
+		es: service.InitEs(),
 	}
 }
 
