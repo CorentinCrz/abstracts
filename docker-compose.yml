@@ -1,6 +1,24 @@
 version: "3.6"
 
 services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: es
+    environment:
+      - node.name=es
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - './es_data:/usr/share/elasticsearch/data'
+    ports:
+      - 9200:9200
+
   swagger:
     image: swaggerapi/swagger-ui
     ports:
@@ -23,6 +41,6 @@ services:
       DB_USER: "user"
       FRONT_URL: "http://localhost"
       DOCUMENTATION_URL: "http://localhost:8085"
-      PORT: ":8080"
+      PORT: "8080"
     ports:
       - 8080:8080
