@@ -1,0 +1,32 @@
+version: "3.6"
+
+services:
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8085:8080
+    volumes:
+      - ./documentation:/documentation
+    environment:
+      SWAGGER_JSON: /documentation/swagger.json
+      BASE_URL: /documentation/api/v1
+
+  wiki:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: database
+      JWT_SECRET: "QgTPVshDVPqqcNMvinBd8vWhGJ8i7udr"
+      DB_PASSWORD: "CvUuM6YK3YVveTYc2McSUvkSxRRkFEJn"
+      DB_USER: "user"
+      FRONT_URL: "http://localhost"
+      DOCUMENTATION_URL: "http://localhost:8085"
+      PORT: ":8080"
+    links:
+      - database
+    ports:
+      - 8080:8080
