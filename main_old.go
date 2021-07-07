@@ -21,7 +21,7 @@ func init() {
 }
 
 
-func maino()  {
+func mainOld()  {
 	log.SetFlags(0)
 
 	var (

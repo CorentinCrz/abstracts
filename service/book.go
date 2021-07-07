@@ -15,6 +15,7 @@ func (e *Elastic) GetBook() ([]model.Book, error)  {
 		e.es.Search.WithContext(context.Background()),
 		e.es.Search.WithIndex("books"),
 		// e.es.Search.WithBody(&buf),
+		//e.es.Search.WithQuery()
 		e.es.Search.WithTrackTotalHits(true),
 		e.es.Search.WithPretty(),
 	)
