@@ -123,11 +123,33 @@
           }
         }
       },
+      "delete": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Delete one book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty"
+          },
+          "404": {
+            "description": "Record not found"
+          }
+        }
+      },
       "put": {
         "tags": [
           "Book"
         ],
-        "summary": "Update book",
+        "summary": "Update one book",
         "parameters": [
           {
             "in": "path",
