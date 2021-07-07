@@ -67,10 +67,10 @@ func (c *Controller) PostBook(w http.ResponseWriter, r *http.Request)  {
 }
 
 func (c *Controller) GetBook(w http.ResponseWriter, r *http.Request)  {
-	//params := mux.Vars(r)
+	author := r.FormValue("author")
 	title := r.FormValue("title")
+	abstract := r.FormValue("abstract")
 	fmt.Println(title)
-	w.Write([]byte(title))
-	b, _ := c.Db.GetBook()
+	b, _ := c.Db.GetBook(&author, &title, &abstract)
 	c.respond(w, r, b, 200)
 }

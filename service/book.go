@@ -3,11 +3,26 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"log"
 	"strings"
 )
+
+func formatResearch(author *string, title *string, abstract *string) string  {
+	str := ""
+	if &author != nil && *author != "" {
+		str += "author: " + *author + ", "
+	}
+	if &title != nil && *title != "" {
+		str += "title: " + *title + ", "
+	}
+	if &abstract != nil && *abstract != "" {
+		str += "abstract: " + *abstract + ", "
+	}
+	return str
+}
 
 func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 	var b strings.Builder
@@ -43,11 +58,13 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 func (e *Elastic) GetBook() ([]model.Book, error)  {
 	var r  map[string]interface{}
 
-	// Perform the search request.
+func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]model.Book, error)  {
+	var r  map[string]interface{}
 	res, err := e.es.Search(
 		e.es.Search.WithContext(context.Background()),
 		e.es.Search.WithIndex("books"),
 		// e.es.Search.WithBody(&buf),
+		e.es.Search.WithQuery(formatResearch(author, title, abstract)),
 		e.es.Search.WithTrackTotalHits(true),
 		e.es.Search.WithPretty(),
 	)

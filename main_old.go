@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/CorentinCrz/abstracts/api/server"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/gorilla/mux"
 	"github.com/subosito/gotenv"
 	"log"
 	"strconv"
@@ -180,7 +178,4 @@ func mainOld()  {
 
 	log.Println(strings.Repeat("=", 37))
 
-	router := mux.NewRouter()
-	s := server.New(router)
-	s.Run()
 }
