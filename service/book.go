@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"log"
@@ -54,9 +53,6 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 	}
 	return nil
 }
-
-func (e *Elastic) GetBook() ([]model.Book, error)  {
-	var r  map[string]interface{}
 
 func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]model.Book, error)  {
 	var r  map[string]interface{}
