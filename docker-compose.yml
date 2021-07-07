@@ -40,7 +40,7 @@ services:
       - ./documentation:/documentation
     environment:
       SWAGGER_JSON: /documentation/swagger.json
-      BASE_URL: /documentation/api/v1
+      BASE_URL: /
 
   api:
     build:

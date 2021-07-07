@@ -1,0 +1,172 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Api allowing to create and find books through there titles and abstracts",
+    "version": "1.0.0",
+    "title": "Swagger Abstract",
+    "contact": {
+      "email": "corentin.croizat@hetic.net"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Book",
+      "description": "Book management endpoints"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/books": {
+      "post": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Add a new book",
+        "parameters": [
+          {
+            "in": "body",
+            "description": "Book object that needs to be added to the store",
+            "name": "book",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "author",
+                "abstract"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "abstract": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Book object"
+          },
+          "400": {
+            "description": "Invalid parameters"
+          }
+        }
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Book object list"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "abstract",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "tags": [
+          "Book"
+        ],
+        "summary": "get all books",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/books/{bookId}": {
+      "get": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Get one book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book object"
+          },
+          "404": {
+            "description": "Record not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Update book",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "description": "Book object that needs to be updated to the store",
+            "name": "book",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "abstract": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book object"
+          },
+          "400": {
+            "description": "Invalid parameters"
+          },
+          "404": {
+            "description": "Record not found"
+          }
+        }
+      }
+    }
+  }
+}
