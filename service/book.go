@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/google/uuid"
 	"log"
 	"strings"
 )
@@ -31,6 +32,8 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 	b.WriteString(book.Author)
 	b.WriteString(`","abstract" : "`)
 	b.WriteString(book.Abstract)
+	b.WriteString(`","id" : "`)
+	b.WriteString(uuid.New().String())
 	b.WriteString(`"}`)
 
 	// Set up the request object.
@@ -81,6 +84,7 @@ func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]mo
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		source := hit.(map[string]interface{})["_source"]
 		b = append(b, model.Book{
+			Id: source.(map[string]interface{})["id"],
 			Title: source.(map[string]interface{})["title"],
 			Author: source.(map[string]interface{})["author"],
 			Abstract: source.(map[string]interface{})["abstract"],

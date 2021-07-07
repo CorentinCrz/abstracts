@@ -1,6 +1,7 @@
 package model
 
 type Book struct {
+	Id interface{}
 	Title interface{}
 	Author interface{}
 	Abstract interface{}
