@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/google/uuid"
@@ -62,32 +64,32 @@ func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]mo
 	res, err := e.es.Search(
 		e.es.Search.WithContext(context.Background()),
 		e.es.Search.WithIndex("books"),
-		// e.es.Search.WithBody(&buf),
+		// e.esbooks?.Search.WithBody(&buf),
 		e.es.Search.WithQuery(formatResearch(author, title, abstract)),
 		e.es.Search.WithTrackTotalHits(true),
 		e.es.Search.WithPretty(),
 	)
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	if res.IsError() {
-		log.Fatalf("Error getting response")
+		return nil, errors.New("Error getting response")
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		log.Fatalf("Error parsing the response body: %s", err)
+		return nil, errors.New(fmt.Sprintf("Error parsing the response body: %s", err))
 	}
 	// Print the ID and document source for each hit.
 	var b []model.Book
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		source := hit.(map[string]interface{})["_source"]
 		b = append(b, model.Book{
-			Id: source.(map[string]interface{})["id"],
-			Title: source.(map[string]interface{})["title"],
-			Author: source.(map[string]interface{})["author"],
-			Abstract: source.(map[string]interface{})["abstract"],
+			Id: fmt.Sprintf("%v", source.(map[string]interface{})["id"]),
+			Title: fmt.Sprintf("%v", source.(map[string]interface{})["title"]),
+			Author: fmt.Sprintf("%v", source.(map[string]interface{})["author"]),
+			Abstract: fmt.Sprintf("%v", source.(map[string]interface{})["abstract"]),
 		})
 	}
 	return b, nil
