@@ -6,6 +6,7 @@ import (
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/CorentinCrz/abstracts/service"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -58,7 +59,31 @@ func (c *Controller) PostBook(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 
-	err = c.Db.CreateBook(book)
+	err = c.Db.CreateBook(book, nil)
+	if err != nil {
+		c.ErrorHandler(w, err)
+		return
+	}
+	c.respond(w, r, book, 200)
+}
+
+func (c *Controller) PutBook(w http.ResponseWriter, r *http.Request)  {
+	params := mux.Vars(r)
+	jsonBody, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		c.ErrorHandler(w, err)
+		return
+	}
+
+	var book model.CreateBook
+	err = json.Unmarshal(jsonBody, &book)
+	if err != nil {
+		c.ErrorHandler(w, err)
+		return
+	}
+
+	err = c.Db.UpdateBook(params["id"], book)
 	if err != nil {
 		c.ErrorHandler(w, err)
 		return

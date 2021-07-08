@@ -26,7 +26,7 @@ func formatResearch(author *string, title *string, abstract *string) string  {
 	return str
 }
 
-func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
+func (e *Elastic) CreateBook(book model.CreateBook, id *string) (error)  {
 	var b strings.Builder
 	b.WriteString(`{"title" : "`)
 	b.WriteString(book.Title)
@@ -35,7 +35,11 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 	b.WriteString(`","abstract" : "`)
 	b.WriteString(book.Abstract)
 	b.WriteString(`","id" : "`)
-	b.WriteString(uuid.New().String())
+	if &id != nil {
+		b.WriteString(*id)
+	} else {
+		b.WriteString(uuid.New().String())
+	}
 	b.WriteString(`"}`)
 
 	// Set up the request object.
@@ -56,6 +60,20 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 		log.Printf("[%s] Error indexing document", res.Status())
 		return err
 	}
+	return nil
+}
+
+func (e *Elastic) UpdateBook(id string, book model.CreateBook) error  {
+	//err := e.DeleteBook(id)
+	//if err != nil {
+	//	return err
+	//}
+
+	err := e.CreateBook(book, &id)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
