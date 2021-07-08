@@ -6,6 +6,7 @@ import (
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/CorentinCrz/abstracts/service"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -28,45 +29,60 @@ func (c *Controller) respond(w http.ResponseWriter, _ *http.Request, data interf
 	}
 }
 
-func (c *Controller) ErrorHandler(w http.ResponseWriter, err error) {
-	if err == nil {
-		return
-	}
-
-	http.Error(w, http.StatusText(500), 500)
-}
-
-
 func New(es *elasticsearch.Client) *Controller {
 	return &Controller{
 		Db: service.New(es),
 	}
 }
 
-func (c *Controller) PostBook(w http.ResponseWriter, r *http.Request)  {
+func (c *Controller) PostBook(w http.ResponseWriter, r *http.Request) {
 	jsonBody, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		c.ErrorHandler(w, err)
+		c.respond(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
 	var book model.CreateBook
 	err = json.Unmarshal(jsonBody, &book)
 	if err != nil {
-		c.ErrorHandler(w, err)
+		c.respond(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
-	err = c.Db.CreateBook(book)
+	err = c.Db.CreateBook(book, nil)
 	if err != nil {
-		c.ErrorHandler(w, err)
+		c.respond(w, r, err, http.StatusInternalServerError)
 		return
 	}
 	c.respond(w, r, book, 200)
 }
 
-func (c *Controller) GetBook(w http.ResponseWriter, r *http.Request)  {
+func (c *Controller) PutBook(w http.ResponseWriter, r *http.Request)  {
+	params := mux.Vars(r)
+	jsonBody, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		c.respond(w, r, err, http.StatusInternalServerError)
+		return
+	}
+
+	var book model.CreateBook
+	err = json.Unmarshal(jsonBody, &book)
+	if err != nil {
+		c.respond(w, r, err, http.StatusInternalServerError)
+		return
+	}
+
+	err = c.Db.UpdateBook(params["id"], book)
+	if err != nil {
+		c.respond(w, r, err, http.StatusInternalServerError)
+		return
+	}
+	c.respond(w, r, book, 200)
+}
+
+func (c *Controller) GetBook(w http.ResponseWriter, r *http.Request) {
 	author := r.FormValue("author")
 	title := r.FormValue("title")
 	abstract := r.FormValue("abstract")
@@ -79,4 +95,14 @@ func (c *Controller) GetBook(w http.ResponseWriter, r *http.Request)  {
 		c.respond(w, r, "Books not found", http.StatusNotFound)
 	}
 	c.respond(w, r, b, http.StatusOK)
+}
+
+func (c *Controller) DeleteBook(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	_, err := c.Db.DeleteBook(params["id"])
+	if err != nil {
+		c.respond(w, r, err, 400)
+		return
+	}
+	c.respond(w, r, "Deleted", 200)
 }
