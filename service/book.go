@@ -77,6 +77,9 @@ func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]mo
 	if res.IsError() {
 		return nil, errors.New("Error getting response")
 	}
+	
+	
+	
 
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
 		return nil, errors.New(fmt.Sprintf("Error parsing the response body: %s", err))

@@ -55,6 +55,7 @@ services:
       FRONT_URL: "http://localhost"
       DOCUMENTATION_URL: "http://localhost:8085"
       PORT: "8080"
+      ELASTICSEARCH_URL: http://es:9200
     ports:
       - 8080:8080
     networks:
