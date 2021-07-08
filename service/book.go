@@ -27,25 +27,25 @@ func formatResearch(author *string, title *string, abstract *string) string {
 }
 
 func (e *Elastic) CreateBook(book model.CreateBook, id *string) error {
-	var b strings.Builder
-	b.WriteString(`{"title" : "`)
-	b.WriteString(book.Title)
-	b.WriteString(`","author" : "`)
-	b.WriteString(book.Author)
-	b.WriteString(`","abstract" : "`)
-	b.WriteString(book.Abstract)
-	b.WriteString(`","id" : "`)
-	if id != nil {
-		b.WriteString(*id)
-	} else {
-		b.WriteString(uuid.New().String())
+	bk := &model.Book{
+		Author: book.Author,
+		Abstract: book.Abstract,
+		Title: book.Title,
 	}
-	b.WriteString(`"}`)
+	if id != nil {
+		bk.Id = *id
+	} else {
+		bk.Id = uuid.New().String()
+	}
 
 	// Set up the request object.
+	bookJson, err := json.Marshal(bk)
+	if err != nil {
+		return err
+	}
 	req := esapi.IndexRequest{
 		Index:   "books",
-		Body:    strings.NewReader(b.String()),
+		Body:    strings.NewReader(string(bookJson)),
 		Refresh: "true",
 	}
 
@@ -57,7 +57,7 @@ func (e *Elastic) CreateBook(book model.CreateBook, id *string) error {
 	}
 	defer res.Body.Close()
 	if res.IsError() {
-		log.Printf("[%s] Error indexing document", res.Status())
+		log.Printf("[%s] Error indexing document", res)
 		return err
 	}
 	return nil
