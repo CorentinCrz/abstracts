@@ -15,5 +15,5 @@ func (s *Server) initializeRoute() {
 	s.Router.HandleFunc("/books", c.PostBook).Methods("POST")
 	s.Router.HandleFunc("/books", c.GetBook).Methods("GET")
 	s.Router.HandleFunc("/books/{id}", c.PutBook).Methods("PUT")
-	s.Router.HandleFunc("/book/{id}", c.DeleteBook).Methods("DELETE")
+	s.Router.HandleFunc("/books/{id}", c.DeleteBook).Methods("DELETE")
 }

@@ -35,7 +35,7 @@ func (e *Elastic) CreateBook(book model.CreateBook, id *string) error {
 	b.WriteString(`","abstract" : "`)
 	b.WriteString(book.Abstract)
 	b.WriteString(`","id" : "`)
-	if &id != nil {
+	if id != nil {
 		b.WriteString(*id)
 	} else {
 		b.WriteString(uuid.New().String())
@@ -64,12 +64,12 @@ func (e *Elastic) CreateBook(book model.CreateBook, id *string) error {
 }
 
 func (e *Elastic) UpdateBook(id string, book model.CreateBook) error  {
-	//err := e.DeleteBook(id)
-	//if err != nil {
-	//	return err
-	//}
+	_, err := e.DeleteBook(id)
+	if err != nil {
+		return err
+	}
 
-	err := e.CreateBook(book, &id)
+	err = e.CreateBook(book, &id)
 	if err != nil {
 		return err
 	}
