@@ -3,14 +3,15 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"log"
+	"strings"
+
 	"github.com/CorentinCrz/abstracts/model"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/google/uuid"
-	"log"
-	"strings"
 )
 
-func formatResearch(author *string, title *string, abstract *string) string  {
+func formatResearch(author *string, title *string, abstract *string) string {
 	str := ""
 	if &author != nil && *author != "" {
 		str += "author: " + *author + ", "
@@ -24,7 +25,7 @@ func formatResearch(author *string, title *string, abstract *string) string  {
 	return str
 }
 
-func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
+func (e *Elastic) CreateBook(book model.CreateBook) error {
 	var b strings.Builder
 	b.WriteString(`{"title" : "`)
 	b.WriteString(book.Title)
@@ -38,9 +39,9 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 
 	// Set up the request object.
 	req := esapi.IndexRequest{
-		Index:      "books",
-		Body:       strings.NewReader(b.String()),
-		Refresh:    "true",
+		Index:   "books",
+		Body:    strings.NewReader(b.String()),
+		Refresh: "true",
 	}
 
 	// Perform the request with the client.
@@ -57,8 +58,8 @@ func (e *Elastic) CreateBook(book model.CreateBook) (error)  {
 	return nil
 }
 
-func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]model.Book, error)  {
-	var r  map[string]interface{}
+func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]model.Book, error) {
+	var r map[string]interface{}
 	res, err := e.es.Search(
 		e.es.Search.WithContext(context.Background()),
 		e.es.Search.WithIndex("books"),
@@ -84,11 +85,27 @@ func (e *Elastic) GetBook(author *string, title *string, abstract *string) ([]mo
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		source := hit.(map[string]interface{})["_source"]
 		b = append(b, model.Book{
-			Id: source.(map[string]interface{})["id"],
-			Title: source.(map[string]interface{})["title"],
-			Author: source.(map[string]interface{})["author"],
+			Id:       source.(map[string]interface{})["id"],
+			Title:    source.(map[string]interface{})["title"],
+			Author:   source.(map[string]interface{})["author"],
 			Abstract: source.(map[string]interface{})["abstract"],
 		})
 	}
 	return b, nil
+}
+
+func (e *Elastic) DeleteBook(id string) (*esapi.Response, error) {
+
+	var index = []string{"books"}
+	req := esapi.DeleteByQueryRequest{
+		Index: index,
+		Query: "id: " + id,
+	}
+
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), e.es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+	}
+	return res, err
 }
