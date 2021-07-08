@@ -72,8 +72,14 @@ func (c *Controller) GetBook(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	abstract := r.FormValue("abstract")
 	fmt.Println(title)
-	b, _ := c.Db.GetBook(&author, &title, &abstract)
-	c.respond(w, r, b, 200)
+	b, err := c.Db.GetBook(&author, &title, &abstract)
+	if err != nil {
+		c.respond(w, r, err, http.StatusInternalServerError)
+	}
+	if b == nil {
+		c.respond(w, r, "Books not found", http.StatusNotFound)
+	}
+	c.respond(w, r, b, http.StatusOK)
 }
 
 func (c *Controller) DeleteBook(w http.ResponseWriter, r *http.Request) {

@@ -1,10 +1,10 @@
 package model
 
 type Book struct {
-	Id interface{}
-	Title interface{}
-	Author interface{}
-	Abstract interface{}
+	Id string
+	Title string
+	Author string
+	Abstract string
 }
 
 type CreateBook struct {
