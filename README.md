@@ -45,6 +45,7 @@ A complete documentation with a clean repository is mandatory.
 
 ``` Go
 type Book struct {
+	Id    string
 	Title string
 	Author string
 	Abstract string
