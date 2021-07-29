@@ -65,6 +65,7 @@ type Book struct {
 
 ## Pourquoi Elastic Search
 
+Elasticsearch à était  conçue pour faire des requete full-text très rapides ce qui nous semblait très pertinant pour faire de la recherche sur des résumé titre ou auteur de livres.
 
 
 ## Api Documentation
