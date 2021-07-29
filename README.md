@@ -31,10 +31,14 @@ A complete documentation with a clean repository is mandatory.
 |       └─ router.go
 |       └─ server.go
 ├─ controllers/
+|   └─ controller.go
 ├─ documentation/
 |   └─ swagger.json
 ├─ models/
+|   └─ book.go
 ├─ service/
+|   └─ book.go
+|   └─ service.ho
 ├─ view/
 ├─ docker-compose.yml
 ├─ main.go
