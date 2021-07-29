@@ -22,7 +22,7 @@ func init() {
 	}
 }
 
-func main() {
+func add() {
 	log.SetFlags(0)
 
 	var (
