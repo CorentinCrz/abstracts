@@ -190,5 +190,24 @@
         }
       }
     }
+  },
+  "definitions": {
+    "book": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "abstract": {
+          "type": "string"
+        }
+      }
+    }
   }
 }
